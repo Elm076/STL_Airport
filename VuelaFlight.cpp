@@ -10,7 +10,7 @@
 #include <sstream>
 #include <ctime>
 
-VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std::string airlines_file) {
+VuelaFlight::VuelaFlight(const std::string airports_file, const std::string routes_file, const std::string airlines_file) {
 
     std::ifstream airports_stream;
 
@@ -54,15 +54,14 @@ VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std
             }
         }
 
-        airports_stream.close();
 
-        std::cout << " Dynamic_container with airports initialized." << std::endl << " Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
+        airports_stream.close();
+        std::sort(airports.begin(), airports.end());
+
+        std::cout << " Vector with airports initialized." << std::endl << " Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
     } else {
         std::cout << "Fatal error opening the file" << std::endl;
     }
-
-    std::sort(airports.begin(), airports.end());
-
 
     std::ifstream airlines_stream;
     airlines_stream.open(airlines_file); //project folder
@@ -108,7 +107,7 @@ VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std
 
         airports_stream.close();
 
-        std::cout << " AVL with airlines initialized./n Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
+        std::cout << " Map with airports initialized." << std::endl << " Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
     } else {
         std::cout << "Fatal error opening the file" << std::endl;
     }
@@ -123,6 +122,7 @@ VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std
         std::string dest_airport;
         std::stringstream columns_routes;
         std::string line;
+        unsigned int counter = 0;
 
 
         clock_t t_ini = clock();
@@ -135,7 +135,7 @@ VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std
                 columns_routes.str(line);
 
 
-                getline(columns_routes, airline, ';'); //we readAVL the line till ';' and omit the caracter
+                getline(columns_routes, airline, ';'); //we read till ';' and omit the caracter
                 getline(columns_routes, orig_airport, ';');
                 getline(columns_routes, dest_airport, ';');
 
@@ -145,26 +145,29 @@ VuelaFlight::VuelaFlight(std::string airports_file, std::string routes_file, std
                 //build the "key" objects to find them
                 Airport orig = Airport(orig_airport);
                 Airport dest = Airport(dest_airport);
-                Airline airlineObject(airline);
 
                 //search the airline needed to build the route
-                Airline* realAirline = &work.find(airlineObject.getIcao())->second;
+                Airline* realAirline = &work.find(airline)->second;
 
                 //search the airports in the data base and build the route to push it after.
-                Airport *real_orig = &*std::find(airports.begin(), airports.end(),orig);
-                Airport *real_dest = &*std::find(airports.begin(),airports.end(),dest);
+                auto real_orig = std::lower_bound(airports.begin(), airports.end(),orig);
+                auto real_dest = std::lower_bound(airports.begin(), airports.end(), dest);
                 //build the new route
-                Route line_route(realAirline,real_orig,real_dest);
+                Route line_route(realAirline,&*real_orig,&*real_dest);
                 //push the new route on the linkedList
                 routes.push_back(line_route);
                 //link recent route to his airline.
                 realAirline->linkAirRoute(&routes.back());
+                /*
+                std::cout << counter << std::endl;
+                counter++;
+                 */
             }
         }
 
         airports_stream.close();
 
-        std::cout << " Linked_list with routes initialized./n Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
+        std::cout << " List with airports initialized." << std::endl << " Reading Time: " << ((clock() - t_ini) / (float) CLOCKS_PER_SEC) << " secs." << std::endl;
     } else {
         std::cout << "Fatal error opening the file" << std::endl;
     }
@@ -256,13 +259,17 @@ Airline& VuelaFlight::searchAirline(std::string airlineIcao) {
     return result;
 }
 
-//FIX THIS
+
 std::vector<Airline> VuelaFlight::searchActiveAirline() {
-    std::vector<Airline*> data = work.readAVL();
+    std::vector<Airline*> data;
+    std::map<std::string,Airline>::iterator it;
+    for (it = work.begin(); it != work.end(); it++){
+        data.push_back(&it->second);
+    }
     std::vector<Airline> result;
-    for (unsigned int i=0; i < data.used_tam();i++){
+    for (unsigned int i=0; i < data.size();i++){
         if(data[i]->isActive())
-            result.push(*data[i]);
+            result.push_back(*data[i]);
     }
     return result;
 }

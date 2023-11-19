@@ -15,7 +15,15 @@
  */
 
 int main() {
-    std::cout << ".....Start of the program ....." << std::endl;
+
+    std::cout << std::endl << ".....Start of the program ....." << std::endl << std::endl;
+
+    VuelaFlight dataBase("..\\aeropuertos_v2.csv", "..\\rutas_v1.csv", "..\\aerolineas_v1.csv");
+
+    dataBase.searchAirline("RYR");
+
+    //Tried to do exercise 4
+    // dataBase.searchAirline("IBE");
 
     std::cout << "----- End of the program -----" << std::endl;
 }
