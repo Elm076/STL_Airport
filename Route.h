@@ -9,15 +9,17 @@
 #include "Airport.h"
 #include "Airline.h"
 #include <list>
+#include "Flight.h"
 
 class Airline;
-
+class Flight;
 class Route {
 private:
 
     Airport* origin;
     Airport* destination;
     Airline* company;
+    std::list<Flight*> flightRoute;
 
 public:
 
@@ -25,6 +27,7 @@ public:
                 origin = nullptr;
                 destination = nullptr;
                 company = nullptr;
+                flightRoute = std::list<Flight*>();
     }
 
     Route(Airline* company, Airport* _origin, Airport* _destination);
@@ -42,6 +45,12 @@ public:
     Airport *getDestination() const;
 
     void setDestination(Airport *destination);
+
+    unsigned int getFlightsNum();
+
+    std::list<Flight*> getFlights();
+
+    bool addFlight(Flight& fli);
 
     ~Route();
 
