@@ -381,4 +381,6 @@ std::set<std::string> VuelaFlight::searchFlightsDestAirp(std::string origCountry
         for(auto it = routesFound[i].getFlights().begin(); i < routesFound[i].getFlightsNum(); i++)
         result.insert(it.operator*()->getFlightNumb());
     }
+
+		 return result;
 }
