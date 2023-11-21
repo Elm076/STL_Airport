@@ -210,6 +210,7 @@ std::vector<Route> VuelaFlight::origRoutesSearch(std::string airportIataOrig) {
 }
 
 std::vector<Airport> VuelaFlight::countryAirportSearch(std::string country) {
+    /*
     std::list<Route>::iterator iterator = routes.begin();
     unsigned int count = 0;
     unsigned int found_count = 0;
@@ -223,8 +224,18 @@ std::vector<Airport> VuelaFlight::countryAirportSearch(std::string country) {
         iterator++;
         count++;
     }
+
     if(found_count == 0){
-        throw std::invalid_argument("---FATAL ERROR-- Doesn't exist a route in the database specified with the origin airport given");
+        std::cout << "---FATAL ERROR-- Doesn't exist a route in the database specified with the origin airport given" <<  << std::endl;
+    }
+    return found_airports;
+     */
+    std::vector<Airport> found_airports;
+
+    for (unsigned int i = 0; i < airports.size(); i++){
+        if (airports[i].getCountryIso() == country){
+            found_airports.push_back(airports[i]);
+        }
     }
     return found_airports;
 }
@@ -373,9 +384,13 @@ std::set<std::string> VuelaFlight::searchFlightsDestAirp(std::string origCountry
     std::set<std::string> result;
     auto allAirpCountry = countryAirportSearch(origCountry);
     std::vector<Route> routesFound;
-
-    for (unsigned int i = 0; i < allAirpCountry.size(); i++){
-        routesFound.push_back(origDestRoutesSearch(allAirpCountry[i].getIata(),iataDestAirp));
+    try{
+        for (unsigned int i = 0; i < allAirpCountry.size(); i++){
+            routesFound.push_back(origDestRoutesSearch(allAirpCountry[i].getIata(),iataDestAirp));
+        }
+    }
+    catch (std::invalid_argument err){
+        std::cout << err.what() << std::endl;
     }
     for (unsigned int i = 0; i < routesFound.size(); i++){
         for(auto it = routesFound[i].getFlights().begin(); i < routesFound[i].getFlightsNum(); i++)

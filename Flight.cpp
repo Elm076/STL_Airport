@@ -81,3 +81,7 @@ const std::string & Flight::getWeatherData() const {
 const Date &Flight::getDate() const {
     return date;
 }
+
+const std::string &Flight::getPlane() const {
+    return plane;
+}

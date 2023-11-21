@@ -50,6 +50,10 @@ public:
     bool operator==(Flight& other);
 
     const std::string & getWeatherData() const;
+
+    const std::string &getPlane() const;
 };
+
+
 
 #endif //STL_AIRPORT_FLIGHT_H
